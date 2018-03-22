@@ -1,6 +1,7 @@
-import Html exposing (Html, div, h1, button, text)
-import Html.Attributes exposing (style)
-import Html.Events exposing (..)
+import Html exposing (Html, div, h1, input, span, button, text)
+import Html.Attributes exposing (style, placeholder, value)
+import Html.Events exposing (onClick, onInput)
+import String
 import Random
 
 main =
@@ -27,17 +28,25 @@ init =
 -- UPDATE
 
 type Msg
-  = Roll
+  = Generate
   | NewFace Int
+  | Min String
+  | Max String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Roll ->
+    Generate ->
       (model, Random.generate NewFace (Random.int model.min model.max))
 
     NewFace newFace ->
       (Model newFace model.min model.max, Cmd.none)
+
+    Min newMin ->
+      (Model model.dieFace (Result.withDefault 0 (String.toInt newMin)) model.max, Cmd.none)
+
+    Max newMax ->
+      (Model model.dieFace model.min (Result.withDefault 0 (String.toInt newMax)), Cmd.none)
 
 -- SUBSCRIPTIONS
 
@@ -53,8 +62,14 @@ view model =
     [
       div [ contentStyle ]
         [
+          div [] [
+            span [ textStyle ] [ text "from" ],
+            input [ inputStyle, placeholder "Min", onInput Min, value (toString model.min) ] [],
+            span [ textStyle ] [ text "to" ],
+            input [ inputStyle, placeholder "Max", onInput Max, value (toString model.max) ] []
+          ],
           h1 [ numberStyle ] [ text (toString model.dieFace) ],
-          button [ btnStyle, onClick Roll ] [ text "Generate" ]
+          button [ btnStyle, onClick Generate ] [ text "Generate" ]
         ]
     ]
 
@@ -74,6 +89,26 @@ contentStyle =
   style
     [
       ("text-align", "center")
+    ]
+
+textStyle =
+  style
+    [
+      ("font-size", "20px"),
+      ("font-family", "Helvetica")
+    ]
+
+inputStyle =
+  style
+    [
+      ("border", "none"),
+      ("outline", "none"),
+      ("margin", "0 10px"),
+      ("color", "#757575"),
+      ("font-size", "24px"),
+      ("max-width", "100px"),
+      ("border-radius", "5px"),
+      ("padding", "10px 15px")
     ]
 
 numberStyle =
