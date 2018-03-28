@@ -23,7 +23,7 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-  (Model 1 0 100, Cmd.none)
+  (Model 1 0 100, Random.generate NewFace (Random.int 0 100))
 
 -- UPDATE
 
