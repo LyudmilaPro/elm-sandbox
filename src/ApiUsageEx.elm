@@ -1,4 +1,4 @@
-import Html exposing (Html, div, text, img)
+import Html exposing (Html, div, button, text, img)
 import Html.Attributes exposing (style, src)
 import Html.Events exposing (onClick)
 import Json.Decode as Decode
@@ -53,7 +53,8 @@ view : Model -> Html Msg
 view model =
   div [ containerStyle ]
     [
-      img [ imgStyle, src model.url ] []
+      img [ imgStyle, src model.url ] [],
+      button [ btnStyle, onClick Generate ] [ text "Generate" ]
     ]
 
 containerStyle =
@@ -67,8 +68,27 @@ containerStyle =
 imgStyle =
   style
     [
-      ("width", "300px")
+      ("height", "300px"),
+      ("margin-bottom", "30px")
     ]
+
+btnStyle =
+  style
+    [
+      ("color", "#fff"),
+      ("border", "none"),
+      ("outline", "none"),
+      ("display", "block"),
+      ("margin", "0 auto"),
+      ("font-size", "24px"),
+      ("cursor", "pointer"),
+      ("padding", "20px 30px"),
+      ("background", "#673AB7"),
+      ("border-radius", "10px"),
+      ("border-bottom", "7px solid #512DA8")
+    ]
+
+-- HTTP
 
 getRandomImg : Cmd Msg
 getRandomImg =
