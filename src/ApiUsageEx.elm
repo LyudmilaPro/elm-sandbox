@@ -2,6 +2,7 @@ import Html exposing (Html, div, button, text, img, select, option)
 import Html.Attributes exposing (style, src, selected)
 import Html.Events exposing (onClick)
 import Json.Decode as Decode
+import Debug exposing (log)
 import Http
 
 main =
@@ -22,7 +23,7 @@ type alias Model =
 
 init : (Model, Cmd Msg)
 init =
-  (Model "" [], getRandomImg)
+  (Model "" [], Cmd.batch [getRandomImg, getBreedsList])
 
 -- UPDATE
 
@@ -44,7 +45,7 @@ update msg model =
       (model, Cmd.none)
 
     NewBreedsList (Ok newList) ->
-      ( { model | breeds = newList }, Cmd.none)
+      ( { model | breeds = "All" :: newList }, Cmd.none)
 
     NewBreedsList (Err _) ->
       (model, Cmd.none)
@@ -57,13 +58,15 @@ subscriptions model =
 
 -- VIEW
 
+renderOption : String -> Html msg
+renderOption s =
+  option [] [ text s ]
+
 view : Model -> Html Msg
 view model =
   div [ containerStyle ]
     [
-      select [ selectStyle ] [
-        option [] [ text "All" ]
-      ],
+      select [ selectStyle ] (List.map renderOption model.breeds),
       img [ imgStyle, src model.url ] [],
       button [ btnStyle, onClick Generate ] [ text "Generate" ]
     ]
